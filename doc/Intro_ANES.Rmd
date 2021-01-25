@@ -216,6 +216,7 @@ anes_burden=anes_dat%>%
 
 ##5.1.1 Participating due to number of children they have
 ```{r 5.1.1}
+load(file="../output/data_use.RData")
 anes_to_children= anes_burden %>%
   filter(!is.na(Number_of_children) & !is.na(turnout))%>%
   group_by(Number_of_children,year)%>%
@@ -237,6 +238,7 @@ ggplot(anes_to_children,
 People with no child participated most in the election
 
 ```{r 5.1.2}
+load(file="../output/data_use.RData")
 anes_to_children= anes_burden %>%
   filter(!is.na(Number_of_children) & !is.na(vote))%>%
   group_by(Number_of_children,year)%>%
@@ -255,9 +257,35 @@ ggplot(anes_to_children,
   scale_fill_brewer(palette="Reds")+
   labs(title="who did people with different number of children vote over the years?")
 ```
+
+##gender effect in having the same amount of children
+```{r 5.1.2,fig.height=10, fig.width=8}
+load(file="../output/data_use.RData")
+anes_to_children2= anes_burden %>%
+  filter(!is.na(Number_of_children) & !is.na(vote) & !is.na(gender) )%>%
+  group_by(Number_of_children,gender,year)%>%
+  count(vote)%>%
+  group_by(Number_of_children,gender,year)%>%
+  mutate(
+    prop=n/sum(n)
+  )
+
+ggplot(anes_to_children2, 
+       aes(x=year, y=prop, fill=vote)) +
+  geom_bar(stat="identity", colour="black")+ 
+  facet_wrap(~Number_of_children+gender, ncol=2) +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90))+
+  scale_fill_brewer(palette="Reds")+
+  labs(title="who did people with different number of children vote over the years?")
+
+```
+There's no big difference between male and female when they have zero child. However, when they have children, female has higher rate of not voting or voting not for president than male. So gender and children both affect the voting decision and participating.
+
 ##participating due to the age of children they have
 
-```{r 5.1.2}
+```{r 5.1.3}
+load(file="../output/data_use.RData")
 anes_to_children1= anes_burden %>%
   filter(!is.na(children_under_6)&& !is.na(children_6_9) &&!is.na(children_10_13)&&
            !is.na(children_14_17)&& !is.na(vote))%>%
@@ -278,6 +306,7 @@ ggplot(anes_to_children1,
 
 ## 5.2 voting due to their social classes
 ```{r 5.2,fig.height=10, fig.width=8}
+load(file="../output/data_use.RData")
 anes_to_social= anes_burden %>%
   filter(!is.na(social) & !is.na(vote))%>%
   group_by(social,year)%>%
@@ -302,10 +331,5 @@ From the distribution graph, we see that for average working and working class, 
 ## 5.3 voting due to their work status
 
 ```{r }
-
-```
-## 5.4 voting due to their gender
-```{r }
-
 
 ```
