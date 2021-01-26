@@ -217,6 +217,7 @@ anes_burden=anes_dat%>%
 ```
 
 ##5.1.1 Participating due to number of children they have
+We want to use the data to see whether the number of children they have will affect the participation. So we did a bar plot of the participation rate: voted, registered but did not vote, did not register and did not vote. We divided the data into four part due to the number of children. And also, we want to discuss the volatile over the years about these factors.
 ```{r 5.1.1}
 load(file="../output/data_use.RData")
 anes_to_children= anes_burden %>%
@@ -237,31 +238,10 @@ ggplot(anes_to_children,
   scale_fill_brewer(palette="Purples")+
   labs(title="How did people with different number of children \n participate in the election over the years?")
 ```
-People with no child participated most in the election
+From the graph above, we know that people with no child participated most in the election. They have the highest probability of registered and voted. Additionally, they are less volatile over the years. Individuals with three children participated least in the election and they have the highest rate of registered but not voted in 1996. The chart may indicate they care less about the political voting than others which may due to their schedule, gender.  
 
-##gender effect in having the same amount of children
-```{r 5.1.2,fig.height=10, fig.width=8}
-load(file="../output/data_use.RData")
-anes_to_children2= anes_burden %>%
-  filter(!is.na(Number_of_children) & !is.na(vote) & !is.na(gender) )%>%
-  group_by(Number_of_children,gender,year)%>%
-  count(vote)%>%
-  group_by(Number_of_children,gender,year)%>%
-  mutate(
-    prop=n/sum(n)
-  )
-
-ggplot(anes_to_children2, 
-       aes(x=year, y=prop, fill=vote)) +
-  geom_bar(stat="identity", colour="black")+ 
-  facet_wrap(~Number_of_children+gender, ncol=2) +
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 90))+
-  scale_fill_brewer(palette="Reds")+
-  labs(title="who did people with different number of children vote over the years?")
-
-```
-There's no big difference between male and female when they have zero child. However, when they have children, female has higher rate of not voting or voting not for president than male. So gender and children both affect the voting decision and participating.
+##5.1.2 Particiation due to gender with same number of children
+As we know from previous, the number of children do have a little impact in the participation rate, we are going to see if the gender has impact on individuals with the same number of children. We still grouped the data by number of children but we add the group by gender to see if gender is an impact in participation.
 ```{r 5.1.3,fig.height=10, fig.width=10}
 load(file="../output/data_use.RData")
 anes_to_children1= anes_burden %>%
@@ -286,9 +266,10 @@ ggplot(anes_to_children1, aes(x="", y=prop, fill=turnout)) +
   scale_fill_brewer(palette="Blues")+
   labs(title="How did gender and number of children affect on the participation generally?")
 ```
-
+Firstly, we can conclude from the pie chart that males participate more than females which means males has higher rate of voted than females'. However, there's no big difference between male and female when they have zero child. This may due to they are single and have less burden from family. However, when they have children, especially has one or three children, females have much lower participate rate than males, which means females has lower voted rate, higher rate of not registered and not voted. There are several reasons may cause this situation. Firstly, females are less interested in politics. Secondly, as females have kids, they put more effort in the family and care less about the voting. 
 
 ## 5.2 voting due to their social classes
+The social classes they are in may affect the family burden they are experiencing, which may affect their voting. So we arrange a data set group by social classes. We eliminate all the NA values and we want to figure out how the social class standing will affect the voting.
 ```{r 5.2,fig.height=10, fig.width=8}
 load(file="../output/data_use.RData")
 anes_to_social= anes_burden %>%
@@ -309,11 +290,15 @@ ggplot(anes_to_social,
   scale_fill_brewer(palette="Reds")+
   labs(title="who did people in different working class vote over the years?")
 ```
-From the distribution graph, we see that for average working and working class, they have more volatility in voting,there are almost more than 1/3 of them didn't vote or voted but not for presidents. And for the upper middle class, they vote more for Republican than others.
+From the distribution graph, we see that for average working class, there are almost more than 1/3 of them didn't vote or voted but not for presidents. And for working class, they have more volatility in voting. They have the most change in voting over the years. And for the upper middle class, they vote more for Republican than others and only a small amount of them didn't vote or voted but not for president. 
+
+The individuals in working class and average working class may have bigger family burden than other classes since they have lower salary and they may also need to raise the same amount of children and they may have less welfare and other insurance than the upper class and middle class. So individuals in working class may volatile more than other classes since they want to vote for the most profit one for them. And more individuals in working class didn't vote since they may have no interest in politics when they think voting has no direct profit for them.
+
 
 
 ## 5.3 voting due to their work status
 ## 5.3.1 participation rate due to their working status
+Other than social status, working status is also a big part of the family burden. If individuals are unemployed, they may have bigger family burden than employed ones. So we have the following categories, student, homemaker, permanently disabled, retired, unemployed, temporarily laid off, and working now. We want to figure out if the working status has effect on their participation in voting.
 
 ```{r 5.3 ,fig.height=14, fig.width=7}
 load(file="../output/data_use.RData")
@@ -335,4 +320,47 @@ ggplot(anes_to_work,
   scale_fill_brewer(palette="Purples")+
   labs(title="How did people in different working status participating vote over the years?")
 ```
+From the chart above, we can see that retired individuals has the highest participation rate in voting, because they may have more spare time and less family burden since they have no children ,they have pension to cover their life, and they don't need to work.
+Employed and homemakers has the least volatile over the years, because they may have the most stable job and work to do and they do not need to worry too much about the expense in life.
+Unemployed has the lease participation over the years, since they may need to find a job to solve the burden from family, so they have no time and interest in politics which have no direct effect with their current worries.
 
+## 5.4 Number of children and working status and social status, total effect on participate.
+Additionally, we are going to consider all these factors together to get a overall sense of how the family burden affect the participation rate of the voting.
+```{r 5.4,fig.height=18, fig.width=10}
+load(file="../output/data_use.RData")
+anes_to_all= anes_burden %>%
+  filter(!is.na(work_st)& !is.na(Number_of_children) & !is.na(social) & !is.na(turnout))%>%
+  group_by(work_st,social,Number_of_children)%>%
+  count(turnout)%>%
+  group_by(work_st,social,Number_of_children)%>%
+  mutate(
+   prop=n/sum(n)
+  )
+
+ggplot(anes_to_all, 
+       aes(x=work_st, y=prop, fill=turnout)) +
+  geom_bar(stat="identity", colour="black")+ 
+  facet_wrap(~social+Number_of_children, ncol=4)+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90))+
+  scale_fill_brewer(palette="Purples")+
+  labs(title="How did three possible factos affect participating rate?")
+
+
+```
+
+For the average working class, the retired people participate the most no matter how many children they have. This may caused since that they have less family burden than others. Their children are all adults and they have pension to cover expenses. So they are more willing to participate in voting.
+
+For the average middle class, they have the most volatile in voting participation due to the working status.
+For the upper middle class with none child, they have less burden since they are in the upper middle level which means they have no worries about money or hey have at least some savings. The lowest participation in the upper middle class with no children is the temporarily laid off working status, which means they are seeking for a job and have less interest in politics as they are worrying about the job position.
+
+## Other things need to mention
+The participation rate between male and female may due to their interest in politics not because of the family burden. Since males are usually more willing to participate in politics than females.
+The participation rate of the social class may also due to their education level.
+The participation rate of working status may only reflect the working they have. However, we need to consider some family influence and sponsorship.
+
+## Conclusion
+Number of children affect more about females in participation than males and as the increasing of children they have, the less participation rate.
+Social status is also affect the participation rate, the working class is more unstable than the upper middle class.
+Working status is also affect the participation rate, retires are more willing to participate than others.
+Additionally, individuals with higher family burden may participate less in voting. 
