@@ -1,11 +1,13 @@
 ---
-title: "A simple R Notebook for exploring the ANES cumulative time series data"
-output:
-  html_document:
-    df_print: paged
-  pdf_document: default
+title: "Project1 ANES_vote Shuqi Yu"
+author: "Shuqi Yu"
+date: "1/26/2021"
+output: pdf_document
 ---
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 # 1. Introduction
 The *American National Election Studies* (ANES) are surveys of voters in the U.S. on the national scale. For each presidential election since 1948, ANES collects responses from respondents both before and after the election. The goal of ANES is to understand political behaviors using systematic surveys. ANES's data and results have been routinely used by news outlets, election campaigns and political researchers.
