@@ -204,14 +204,16 @@ anes_burden=anes_dat%>%
     children_10_13=as_factor(VCF0138c),
     children_14_17=as_factor(VCF0138d),
     social=as_factor(VCF0148a),
+    work_st=as_factor(VCF0116),
+    work_HH=as_factor(VCF0117),
     vote=as_factor(VCF0706),
-    race=as_factor(VCF0105a),
     gender=as_factor(VCF0104),
     turnout=as_factor(VCF0703),
     year=as_factor(VCF0004)
     
   )%>%
   filter(year %in% Election_years)
+
 ```
 
 ##5.1.1 Participating due to number of children they have
@@ -232,31 +234,10 @@ ggplot(anes_to_children,
   facet_wrap(~Number_of_children, ncol=2) +
   theme_bw()+
   theme(axis.text.x = element_text(angle = 90))+
-  scale_fill_brewer(palette="Reds")+
+  scale_fill_brewer(palette="Purples")+
   labs(title="How did people with different number of children \n participate in the election over the years?")
 ```
 People with no child participated most in the election
-
-```{r 5.1.2}
-load(file="../output/data_use.RData")
-anes_to_children= anes_burden %>%
-  filter(!is.na(Number_of_children) & !is.na(vote))%>%
-  group_by(Number_of_children,year)%>%
-  count(vote)%>%
-  group_by(Number_of_children,year)%>%
-  mutate(
-    prop=n/sum(n)
-  )
-
-ggplot(anes_to_children, 
-       aes(x=year, y=prop, fill=vote)) +
-  geom_bar(stat="identity", colour="black")+ 
-  facet_wrap(~Number_of_children, ncol=2) +
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 90))+
-  scale_fill_brewer(palette="Reds")+
-  labs(title="who did people with different number of children vote over the years?")
-```
 
 ##gender effect in having the same amount of children
 ```{r 5.1.2,fig.height=10, fig.width=8}
@@ -281,28 +262,31 @@ ggplot(anes_to_children2,
 
 ```
 There's no big difference between male and female when they have zero child. However, when they have children, female has higher rate of not voting or voting not for president than male. So gender and children both affect the voting decision and participating.
-
-##participating due to the age of children they have
-
-```{r 5.1.3}
+```{r 5.1.3,fig.height=10, fig.width=10}
 load(file="../output/data_use.RData")
 anes_to_children1= anes_burden %>%
-  filter(!is.na(children_under_6)&& !is.na(children_6_9) &&!is.na(children_10_13)&&
-           !is.na(children_14_17)&& !is.na(vote))%>%
-  group_by(vote)%>%
-  count(vote)
+  filter(!is.na(Number_of_children) & !is.na(turnout) & !is.na(gender) )%>%
+  group_by(Number_of_children,gender)%>%
+  count(turnout)%>%
+  group_by(Number_of_children,gender)%>%
+  mutate(
+    prop=n/sum(n)
+  )
 
-
-
-
-ggplot(anes_to_children1, 
-       aes(x=year, y=vote)) +
-  geom_bar(stat="identity", colour="black")+ theme_bw()+
-  theme(axis.text.x = element_text(angle = 90))+
-  scale_fill_brewer(palette="Reds")+
-  labs(title="How did people with differnet number of children participated \n in the election over the years?")
-
+ggplot(anes_to_children1, aes(x="", y=prop, fill=turnout)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  geom_text(aes(label = paste0(round(prop,3), "%")), position = position_stack(vjust=0.5)) +
+  labs(x = NULL, y = NULL) +
+  facet_wrap(~Number_of_children+gender, ncol=2) +
+  theme_classic() +
+  theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank()) +
+  scale_fill_brewer(palette="Blues")+
+  labs(title="How did gender and number of children affect on the participation generally?")
 ```
+
 
 ## 5.2 voting due to their social classes
 ```{r 5.2,fig.height=10, fig.width=8}
@@ -329,7 +313,26 @@ From the distribution graph, we see that for average working and working class, 
 
 
 ## 5.3 voting due to their work status
+## 5.3.1 participation rate due to their working status
 
-```{r }
+```{r 5.3 ,fig.height=14, fig.width=7}
+load(file="../output/data_use.RData")
+anes_to_work= anes_burden %>%
+  filter(!is.na(work_st) & !is.na(turnout))%>%
+  group_by(work_st,year)%>%
+  count(turnout)%>%
+  group_by(work_st,year)%>%
+  mutate(
+   prop=n/sum(n)
+  )
 
+ggplot(anes_to_work, 
+       aes(x=year, y=prop, fill=turnout)) +
+  geom_bar(stat="identity", colour="black")+ 
+  facet_wrap(~work_st, ncol=1)+
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 90))+
+  scale_fill_brewer(palette="Purples")+
+  labs(title="How did people in different working status participating vote over the years?")
 ```
+
