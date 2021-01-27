@@ -191,7 +191,8 @@ ggplot(anes_vote_race_year,
   labs(title="Who did racial groups vote for in the election \n over the years?")
 ```
 
-## 5. The voting relationship with thier family burden and duty
+
+# 5. The voting relationship with thier family burden and duty
 
 ## 5.1 voting due to children they have
 ```{r 5.1}
